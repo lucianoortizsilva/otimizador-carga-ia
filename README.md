@@ -1,16 +1,9 @@
-### 🚧 ```PROJETO EM CONSTRUÇÃO```
+### 🚧 ```PROJETO EM CONSTRUCAO```
 
-### O que é ?
+### O que e ?
 
-É um projeto web responsável por otimizar o transporte de SKU's para cada veículo disponível.\
-SKU(Stock Keeping Unit), é um código único usado para identificar um produto específico dentro do estoque.\
-
-Exemplo:\
-Se uma loja vende o item camiseta ```camiseta básica```, então podemos ter as skus:\
-Camiseta preta, tamanho P → SKU 001\
-Camiseta preta, tamanho M → SKU 002\
-Camiseta preta, tamanho G → SKU 003\
-
+E um projeto web responsavel por otimizar o transporte de SKU's para cada veiculo disponivel.\
+SKU (Stock Keeping Unit) e um codigo unico usado para identificar um produto especifico dentro do estoque.\
 
 ### Tecnologias
 
@@ -18,5 +11,11 @@ Camiseta preta, tamanho G → SKU 003\
 - [RabbitMQ](https://www.rabbitmq.com/)
 - [MongoDB](https://www.mongodb.com/)
 - [Docker](https://www.docker.com/)
+
+### Cenarios de teste
+
+O cenario detalhado do endpoint `POST /otimizar-carga` foi movido para:
+
+- `docs/cenarios-teste-api.md`
 
 ### Arquitetura
