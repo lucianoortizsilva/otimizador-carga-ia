@@ -65,7 +65,7 @@ class CaminhaoResumo(BaseModel):
     id_destino: int
     ids_sku_formatado: str
     qtd_total_skus: int
-    regra_aprovada: bool
+    todos_criterios_aprovados: bool
 
     # Permite campos dinâmicos como criterio1_valor_total, criterio1_percentual,
     # criterio2_valor_total, etc.

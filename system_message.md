@@ -31,12 +31,15 @@ SE qualquer condição falhar → **pule esta SKU e continue para a próxima**. 
 - `ids_sku_formatado`: IDs das SKUs carregadas, em ordem, separados por vírgula sem espaços. Ex.: `"1,2,3"`.
 - `qtd_total_skus`: quantidade de SKUs carregadas.
 - `criterio{codigo}_valor_total`: valor acumulado final do critério.
+- `criterio{codigo}_aprovado`: `true` se o critério estiver dentro da faixa aceita; caso contrário `false`.
 - `criterio{codigo}_percentual`: calculado pela fórmula abaixo:
   - Se `valorMaximo <= 0` → resultado é `0.00`
   - Caso contrário → `(criterio{codigo}_valor_total / valorMaximo) × 100`
   - A divisão deve ser feita com precisão de 10 casas decimais usando arredondamento HALF_UP, depois multiplicada por 100 e arredondada para **2 casas decimais** no resultado final.
 - `criterio{codigo}_valor_total`: sempre com **2 casas decimais** (ex.: `2969.30`).
-- `regra_aprovada`: `true` se, para TODOS os critérios, `valorMinimo ≤ valor_total ≤ valorMaximo`; caso contrário `false`.
+- `todos_criterios_aprovados`: `true` se, para TODOS os critérios, `minimo_aceitavel ≤ valor_total ≤ valorMaximo`; caso contrário `false`.
+  - Se `tipoCalculo` = `"Abs"` -> `minimo_aceitavel = valorMinimo`
+  - Se `tipoCalculo` = `"%"` -> `minimo_aceitavel = (valorMinimo / 100) × valorMaximo`
 
 ### PASSO 5 — Exemplo detalhado (use como referência de cálculo)
 
@@ -51,7 +54,8 @@ Entrada:
 
 criterio1_valor_total = 2969.30
 criterio1_percentual = (2969.30 / 3000) com 10 casas HALF_UP = 0.9897666667 × 100 = 98.98
-regra_aprovada = 2500 ≤ 2969.30 ≤ 3000 → true
+criterio1_aprovado = true
+todos_criterios_aprovados = 2500 ≤ 2969.30 ≤ 3000 → true
 
 Saída esperada:
 ```json
@@ -62,8 +66,9 @@ Saída esperada:
       "id_destino": 20,
       "ids_sku_formatado": "1,2,3,4,5,6,7",
       "qtd_total_skus": 7,
-      "regra_aprovada": true,
+      "todos_criterios_aprovados": true,
       "criterio1_valor_total": 2969.30,
+      "criterio1_aprovado": true,
       "criterio1_percentual": 98.98
     }
   ]
@@ -81,8 +86,9 @@ Retorne APENAS JSON válido neste formato:
       "id_destino": 20,
       "ids_sku_formatado": "1,2,3",
       "qtd_total_skus": 3,
-      "regra_aprovada": true,
+      "todos_criterios_aprovados": true,
       "criterio1_valor_total": 198.85,
+      "criterio1_aprovado": true,
       "criterio1_percentual": 89.74
     }
   ]
@@ -90,9 +96,10 @@ Retorne APENAS JSON válido neste formato:
 ```
 
 ## REGRAS IMPORTANTES
-- `valorMinimo` NÃO é usado para decidir se uma SKU cabe. É usado APENAS para calcular `regra_aprovada` no final.
+- `valorMinimo` NÃO é usado para decidir se uma SKU cabe. É usado APENAS para calcular `todos_criterios_aprovados` no final.
+- Se `tipoCalculo` for `%`, converta `valorMinimo` para valor absoluto com base em `valorMaximo` antes de avaliar `todos_criterios_aprovados`.
 - `valorMaximo` é o único limite usado para decidir se uma SKU pode ser carregada.
 - Percorra SEMPRE todas as SKUs. Nunca pare ao encontrar uma SKU inválida.
-- Para cada critério presente, inclua `criterio{codigo}_valor_total` e `criterio{codigo}_percentual`.
+- Para cada critério presente, inclua `criterio{codigo}_valor_total`, `criterio{codigo}_percentual` e `criterio{codigo}_aprovado`.
 - Use número JSON com ponto decimal (ex.: `222.90`), nunca vírgula decimal.
 - Não inclua markdown, comentários ou texto extra fora do JSON de resposta.
